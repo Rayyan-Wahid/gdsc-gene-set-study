@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import sklearn
+from joblib import Memory
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import ElasticNet
@@ -25,6 +26,7 @@ class Config:
     max_missing: float = 0.2
     n_jobs: int = 1
     trees: int = 200
+    cache_dir: str | None = None
 
 
 def evaluate(X, y, output, config=None, metadata=None):
@@ -40,6 +42,9 @@ def evaluate(X, y, output, config=None, metadata=None):
     if any(output.iterdir()):
         raise ValueError("Output directory must be empty to preserve earlier runs.")
     outer = list(KFold(config.outer_folds, shuffle=True, random_state=config.seed).split(X))
+    memory = Memory(config.cache_dir, verbose=0) if config.cache_dir else None
+    # Save the design before fitting so interruptions still leave a reproducible record.
+    (output / 'run_design.json').write_text(json.dumps({'config': asdict(config), 'metadata': metadata or {}}, indent=2))
     rows, predictions, genes, assignments, tuning = [], [], [], [], []
     for fold, (train, test) in enumerate(outer, 1):
         print(f"Outer fold {fold}/{config.outer_folds}", flush=True)
@@ -56,9 +61,10 @@ def evaluate(X, y, output, config=None, metadata=None):
                                   {"model__max_features": [0.3, 1.0], "model__min_samples_leaf": [2, 5]}),
             }
             for name, (model, grid) in models.items():
+                print(f'  {name}, {k} genes: inner search', flush=True)
                 pipe = Pipeline([("genes", GeneSelector(k, config.max_missing)),
                                  ("scale", StandardScaler() if name == "elastic_net" else "passthrough"),
-                                 ("model", model)])
+                                 ("model", model)], memory=memory)
                 search = GridSearchCV(pipe, grid, scoring="neg_root_mean_squared_error", cv=inner,
                                       n_jobs=config.n_jobs, error_score="raise")
                 search.fit(X.iloc[train], y.iloc[train])
@@ -79,6 +85,8 @@ def evaluate(X, y, output, config=None, metadata=None):
             predictions.extend({"cell_line_id": ident, "fold": fold, "model": name, "gene_count": k,
                                 "observed": actual, "predicted": estimate}
                                for ident, actual, estimate in zip(truth.index, truth, pred))
+        pd.DataFrame(rows).to_csv(output / 'checkpoint_fold_metrics.csv', index=False)
+        pd.DataFrame(predictions).to_csv(output / 'checkpoint_predictions.csv', index=False)
     metrics = pd.DataFrame(rows)
     summary = metrics.groupby(["model", "gene_count"])[["rmse", "mae", "r2"]].agg(["mean", "std"])
     summary.columns = ["_".join(col) for col in summary.columns]

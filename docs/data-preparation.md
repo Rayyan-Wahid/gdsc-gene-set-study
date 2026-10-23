@@ -1,5 +1,25 @@
 # Data preparation
 
+## Downloaded CMP archive adapter
+
+The supplied archive is `rnaseq_merged_20250922.zip` (September 2025),
+with `model_list_20261013.csv` and `screened_compounds_rel_8.5_inchi.csv`.
+The version used is recorded from the actual download, not the originally suggested
+March 2026 archive. Use:
+
+```bash
+python scripts/prepare_cmp.py --archive PATH_TO_ZIP --models PATH_TO_MODEL_LIST --output data/prepared_cmp
+```
+
+The adapter reads only the RSEM TPM member and verifies its ZIP CRC while reading.
+It preserves the supplied log2(TPM+1) scale. It joins directly on Sanger model IDs, which are present in the October 2023
+GDSC2 workbook, and retains unique Ensembl gene identifiers.
+All rows sharing an ambiguous Ensembl identifier are excluded and exported for
+audit. These identifier-only decisions do not use response measurements. Gene
+filtering by missingness, variance, or response association still happens in folds.
+The adapter exports gene annotations, tissue/source metadata, checksums, and counts.
+It does not copy clinical annotation fields unrelated to this study into outputs.
+
 Obtain expression and fitted drug-response data from the official
 [GDSC portal](https://www.cancerrxgene.org/) or its linked Sanger distribution.
 Older bulk-download URLs may no longer work. No download URL or current release

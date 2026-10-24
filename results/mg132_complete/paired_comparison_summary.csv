@@ -1,0 +1,7 @@
+model,smaller_genes,larger_genes,mean_rmse_difference,folds_larger_better
+elastic_net,50,200,-0.0033289998526516485,1
+elastic_net,50,1000,0.019880192408133233,0
+elastic_net,200,1000,0.023209192260784883,0
+random_forest,50,200,0.005768340982505981,1
+random_forest,50,1000,0.009963486082239802,1
+random_forest,200,1000,0.004195145099733821,1

@@ -1,0 +1,71 @@
+{
+  "config": {
+    "gene_counts": [
+      50,
+      200,
+      1000
+    ],
+    "outer_folds": 5,
+    "inner_folds": 3,
+    "seed": 42,
+    "max_missing": 0.2,
+    "n_jobs": 2,
+    "trees": 200,
+    "cache_dir": "outputs/training_cache"
+  },
+  "metadata": {
+    "drug_id": "1862",
+    "dataset": "GDSC2",
+    "response_rows": 969,
+    "missing_response_rows": 0,
+    "replicate_rows_collapsed": 0,
+    "response_cell_lines_without_expression": 25,
+    "matched_cell_lines": 944,
+    "input_genes": 41131,
+    "synthetic": false,
+    "frozen_selection": {
+      "dataset": "GDSC2",
+      "response_release": "27Oct23",
+      "drug_id": 1862,
+      "drug_name": "MG-132",
+      "matched_cell_lines": 944,
+      "selection_rule": "Maximum unique matched cell lines with finite response; ties use smallest numeric drug ID",
+      "selected_before_model_fitting": true,
+      "source_xlsx_sha256": "0e99120a14a003dcbd3c27c020f1cfd35e38ee091067a2406f66c0d4dbc1c899",
+      "compounds_sha256": "16fb779bf55a0171ef388d1764d074db28c12e3e28ddc74516816dfd2568061d",
+      "compound_annotations": [
+        {
+          "DRUG_ID": 1862,
+          "SCREENING_SITE": "SANGER",
+          "DRUG_NAME": "MG-132",
+          "SYNONYMS": "LLL cpd, MG 132, MG132",
+          "TARGET": "Proteasome, CAPN1",
+          "TARGET_PATHWAY": "Protein stability and degradation",
+          "CHEMBL_ID": "CHEMBL64925",
+          "INCHI_KEY": "TZYWCYJVHRLUCT-VABKMULXSA-N"
+        }
+      ],
+      "expression_preparation": {
+        "archive_name": "rnaseq_merged_20250922.zip",
+        "archive_sha256": "a7cf0ea9e22770649011f71c7736e828262ccc0cba332bd153d7bee6f7404689",
+        "models_name": "model_list_20261013.csv",
+        "models_sha256": "5e2868d7c063dfd83b8965cbab60f7531f5089968107999e316a2a38e07da6d9",
+        "matrix_member": "rnaseq_merged_rsem_tpm_20250922.csv",
+        "matrix_crc_verified": true,
+        "expression_scale": "Supplied CMP log2(TPM+1); no additional transformation",
+        "matrix_samples": 1783,
+        "mapped_samples": 1783,
+        "unmapped_or_ambiguous_samples": 0,
+        "genes": 41131,
+        "missing_values": 5672286,
+        "excluded_gene_rows": 14,
+        "duplicate_gene_policy": "exclude all rows with ambiguous Ensembl identifiers",
+        "gene_identifier": "ensembl_gene_id",
+        "sample_identifier": "Sanger model_id"
+      }
+    },
+    "expression_sha256": "56e0b5e28f44e36a4fe6983847a99e964d7cac80e511828c59ac34d5c8b5f4ee",
+    "responses_sha256": "2cc697dc315a70cb8697279d3cf6974fd5f8515337c2ef255380e462f7d15a16"
+  },
+  "signature": "723e8c83e54d0fe2d473717c88a31d88"
+}

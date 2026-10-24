@@ -1,0 +1,376 @@
+{
+  "config": {
+    "gene_counts": [
+      50,
+      200,
+      1000
+    ],
+    "outer_folds": 5,
+    "inner_folds": 3,
+    "seed": 42,
+    "max_missing": 0.2,
+    "n_jobs": 2,
+    "trees": 200,
+    "cache_dir": "outputs/training_cache"
+  },
+  "metadata": {
+    "drug_id": "1862",
+    "dataset": "GDSC2",
+    "response_rows": 969,
+    "missing_response_rows": 0,
+    "replicate_rows_collapsed": 0,
+    "response_cell_lines_without_expression": 25,
+    "matched_cell_lines": 944,
+    "input_genes": 41131,
+    "synthetic": false,
+    "frozen_selection": {
+      "dataset": "GDSC2",
+      "response_release": "27Oct23",
+      "drug_id": 1862,
+      "drug_name": "MG-132",
+      "matched_cell_lines": 944,
+      "selection_rule": "Maximum unique matched cell lines with finite response; ties use smallest numeric drug ID",
+      "selected_before_model_fitting": true,
+      "source_xlsx_sha256": "0e99120a14a003dcbd3c27c020f1cfd35e38ee091067a2406f66c0d4dbc1c899",
+      "compounds_sha256": "16fb779bf55a0171ef388d1764d074db28c12e3e28ddc74516816dfd2568061d",
+      "compound_annotations": [
+        {
+          "DRUG_ID": 1862,
+          "SCREENING_SITE": "SANGER",
+          "DRUG_NAME": "MG-132",
+          "SYNONYMS": "LLL cpd, MG 132, MG132",
+          "TARGET": "Proteasome, CAPN1",
+          "TARGET_PATHWAY": "Protein stability and degradation",
+          "CHEMBL_ID": "CHEMBL64925",
+          "INCHI_KEY": "TZYWCYJVHRLUCT-VABKMULXSA-N"
+        }
+      ],
+      "expression_preparation": {
+        "archive_name": "rnaseq_merged_20250922.zip",
+        "archive_sha256": "a7cf0ea9e22770649011f71c7736e828262ccc0cba332bd153d7bee6f7404689",
+        "models_name": "model_list_20261013.csv",
+        "models_sha256": "5e2868d7c063dfd83b8965cbab60f7531f5089968107999e316a2a38e07da6d9",
+        "matrix_member": "rnaseq_merged_rsem_tpm_20250922.csv",
+        "matrix_crc_verified": true,
+        "expression_scale": "Supplied CMP log2(TPM+1); no additional transformation",
+        "matrix_samples": 1783,
+        "mapped_samples": 1783,
+        "unmapped_or_ambiguous_samples": 0,
+        "genes": 41131,
+        "missing_values": 5672286,
+        "excluded_gene_rows": 14,
+        "duplicate_gene_policy": "exclude all rows with ambiguous Ensembl identifiers",
+        "gene_identifier": "ensembl_gene_id",
+        "sample_identifier": "Sanger model_id"
+      }
+    },
+    "expression_sha256": "56e0b5e28f44e36a4fe6983847a99e964d7cac80e511828c59ac34d5c8b5f4ee",
+    "responses_sha256": "2cc697dc315a70cb8697279d3cf6974fd5f8515337c2ef255380e462f7d15a16"
+  },
+  "python": "3.13.7",
+  "numpy": "2.3.4",
+  "pandas": "2.3.3",
+  "sklearn": "1.7.2",
+  "tuning": [
+    {
+      "fold": 1,
+      "model": "elastic_net",
+      "gene_count": 50,
+      "inner_rmse": 0.5912676004998768,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.5
+      }
+    },
+    {
+      "fold": 1,
+      "model": "random_forest",
+      "gene_count": 50,
+      "inner_rmse": 0.59390388247379,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 5
+      }
+    },
+    {
+      "fold": 1,
+      "model": "elastic_net",
+      "gene_count": 200,
+      "inner_rmse": 0.5904928615357071,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 1,
+      "model": "random_forest",
+      "gene_count": 200,
+      "inner_rmse": 0.5879339822651154,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 5
+      }
+    },
+    {
+      "fold": 1,
+      "model": "elastic_net",
+      "gene_count": 1000,
+      "inner_rmse": 0.6046398419364782,
+      "params": {
+        "model__alpha": 1.0,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 1,
+      "model": "random_forest",
+      "gene_count": 1000,
+      "inner_rmse": 0.5891371044076908,
+      "params": {
+        "model__max_features": 1.0,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 2,
+      "model": "elastic_net",
+      "gene_count": 50,
+      "inner_rmse": 0.6942750380655823,
+      "params": {
+        "model__alpha": 1.0,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 2,
+      "model": "random_forest",
+      "gene_count": 50,
+      "inner_rmse": 0.6408840746794874,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 2,
+      "model": "elastic_net",
+      "gene_count": 200,
+      "inner_rmse": 0.6842058116170389,
+      "params": {
+        "model__alpha": 1.0,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 2,
+      "model": "random_forest",
+      "gene_count": 200,
+      "inner_rmse": 0.6348941066876982,
+      "params": {
+        "model__max_features": 1.0,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 2,
+      "model": "elastic_net",
+      "gene_count": 1000,
+      "inner_rmse": 0.6647279485757516,
+      "params": {
+        "model__alpha": 1.0,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 2,
+      "model": "random_forest",
+      "gene_count": 1000,
+      "inner_rmse": 0.6421156429747944,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 3,
+      "model": "elastic_net",
+      "gene_count": 50,
+      "inner_rmse": 0.6324846030771796,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 3,
+      "model": "random_forest",
+      "gene_count": 50,
+      "inner_rmse": 0.623982371297258,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 3,
+      "model": "elastic_net",
+      "gene_count": 200,
+      "inner_rmse": 0.6764656281088287,
+      "params": {
+        "model__alpha": 1.0,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 3,
+      "model": "random_forest",
+      "gene_count": 200,
+      "inner_rmse": 0.6243523024176915,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 3,
+      "model": "elastic_net",
+      "gene_count": 1000,
+      "inner_rmse": 0.6634625197192409,
+      "params": {
+        "model__alpha": 1.0,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 3,
+      "model": "random_forest",
+      "gene_count": 1000,
+      "inner_rmse": 0.6210489495424868,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 4,
+      "model": "elastic_net",
+      "gene_count": 50,
+      "inner_rmse": 0.6358614692516177,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.5
+      }
+    },
+    {
+      "fold": 4,
+      "model": "random_forest",
+      "gene_count": 50,
+      "inner_rmse": 0.616159105680981,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 5
+      }
+    },
+    {
+      "fold": 4,
+      "model": "elastic_net",
+      "gene_count": 200,
+      "inner_rmse": 0.6246054060345593,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.1
+      }
+    },
+    {
+      "fold": 4,
+      "model": "random_forest",
+      "gene_count": 200,
+      "inner_rmse": 0.6090084931182987,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 4,
+      "model": "elastic_net",
+      "gene_count": 1000,
+      "inner_rmse": 0.6283620537053337,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.5
+      }
+    },
+    {
+      "fold": 4,
+      "model": "random_forest",
+      "gene_count": 1000,
+      "inner_rmse": 0.6119023753874223,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 5,
+      "model": "elastic_net",
+      "gene_count": 50,
+      "inner_rmse": 0.6359531011325453,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.5
+      }
+    },
+    {
+      "fold": 5,
+      "model": "random_forest",
+      "gene_count": 50,
+      "inner_rmse": 0.6349404828585091,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    },
+    {
+      "fold": 5,
+      "model": "elastic_net",
+      "gene_count": 200,
+      "inner_rmse": 0.6351136916521696,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.5
+      }
+    },
+    {
+      "fold": 5,
+      "model": "random_forest",
+      "gene_count": 200,
+      "inner_rmse": 0.6304977930943712,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 5
+      }
+    },
+    {
+      "fold": 5,
+      "model": "elastic_net",
+      "gene_count": 1000,
+      "inner_rmse": 0.637949326563691,
+      "params": {
+        "model__alpha": 0.1,
+        "model__l1_ratio": 0.5
+      }
+    },
+    {
+      "fold": 5,
+      "model": "random_forest",
+      "gene_count": 1000,
+      "inner_rmse": 0.6326781263678191,
+      "params": {
+        "model__max_features": 0.3,
+        "model__min_samples_leaf": 2
+      }
+    }
+  ]
+}

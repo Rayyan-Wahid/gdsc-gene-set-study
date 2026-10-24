@@ -4,8 +4,8 @@ Compare 50, 200, and 1,000 expression genes for predicting one anticancer drug's
 LN_IC50 in cancer cell lines. Implements elastic net, random forest, and a
 training-mean baseline with shared five-fold outer and three-fold inner CV.
 
-**Status:** real-data preparation is complete. MG-132 (drug ID 1862) was selected
-by maximum coverage: 944 matched cell lines. The five-fold experiment is running.
+**Status:** the five-fold experiment, report, and executed notebook are complete.
+MG-132 (drug ID 1862) was selected by maximum coverage: 944 matched cell lines.
 The frozen design and checksums are in `results/study_design/`.
 
 ## Setup
@@ -85,11 +85,20 @@ or recorded software versions require a fresh output directory. Checkpoints
 and raw data are excluded from Git. The final notebook checks shared test folds,
 prediction coverage, the training-mean baseline, and recomputed RMSE values.
 
-## Next milestones
+## Results
 
-- Run the full 50/200/1,000-gene study and inspect convergence warnings.
-- Compare paired fold errors and investigate tissue composition as a limitation.
-- Review selected genes against drug biology and write the final report.
+The lowest observed mean RMSE was **0.6000** for the 50-gene random forest,
+compared with **0.6987** for the training-mean baseline (14.1% lower).
+Larger gene sets did not consistently improve prediction. The 200-gene elastic
+net had a slightly lower mean RMSE than its 50-gene version, but improved in only
+one of five paired folds. These comparisons do not establish statistical equivalence
+or an independently validated winning configuration.
 
-The notebook in `notebooks/` provides a starting workflow. This study evaluates
+- [Study report](results/mg132_complete/report.md)
+- [Executed results notebook](notebooks/02_mg132_results.ipynb)
+- [Exploratory biological interpretation](results/mg132_complete/biology.md)
+- [Summary metrics](results/mg132_complete/summary.csv)
+
+The results notebook verifies all 6,608 held-out predictions and recomputes fold
+RMSE values. This study evaluates
 cell-line prediction within one dataset; it does not establish patient utility.

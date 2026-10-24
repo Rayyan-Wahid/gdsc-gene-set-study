@@ -1,0 +1,23 @@
+{
+  "drug_rows": 969,
+  "unique_response_lines": 969,
+  "matched_lines": 944,
+  "replicate_rows": 0,
+  "missing_targets": 0,
+  "tissue_count": 28,
+  "target_summary": {
+    "count": 944.0,
+    "mean": -1.292212279661017,
+    "std": 0.7026282791850792,
+    "min": -3.171575,
+    "25%": -1.71607925,
+    "50%": -1.365895,
+    "75%": -0.952397,
+    "max": 4.192223
+  },
+  "model_types": {
+    "Cell Line": 944
+  },
+  "shared_patient_groups": 0,
+  "models_in_shared_patient_groups": 0
+}

@@ -38,7 +38,7 @@ class WorkflowTests(unittest.TestCase):
         y = pd.Series(X.a * 2 + rng.normal(size=24), index=X.index)
         with tempfile.TemporaryDirectory() as temp:
             summary = evaluate(X, y, temp, Config(gene_counts=(2,), outer_folds=3,
-                               inner_folds=2, trees=3))
+                               inner_folds=2, trees=3, cache_dir=f"{temp}/cache"))
             pred = pd.read_csv(f"{temp}/predictions.csv")
             self.assertEqual(len(summary), 3)
             self.assertEqual(len(pred), 24*3)

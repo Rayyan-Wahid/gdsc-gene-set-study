@@ -4,8 +4,9 @@ Compare 50, 200, and 1,000 expression genes for predicting one anticancer drug's
 LN_IC50 in cancer cell lines. Implements elastic net, random forest, and a
 training-mean baseline with shared five-fold outer and three-fold inner CV.
 
-**Status:** initial analysis implementation, tested with synthetic data. No GDSC
-results or biological conclusions have been produced yet.
+**Status:** real-data preparation is complete. MG-132 (drug ID 1862) was selected
+by maximum coverage: 944 matched cell lines. The five-fold experiment is running.
+The frozen design and checksums are in `results/study_design/`.
 
 ## Setup
 
@@ -36,7 +37,8 @@ gene-study run --expression data/processed/expression.csv --responses data/proce
 ```
 
 Select and record the drug based on matched sample coverage before running model
-comparisons. `DRUG_ID` and `RELEASE_LABEL` are placeholders. No drug is chosen yet.
+comparisons. `DRUG_ID` and `RELEASE_LABEL` are placeholders for custom runs.
+For this study, the frozen choice is MG-132, GDSC2 release 27Oct23.
 Output folders must be empty to prevent accidental overwrites. The real study
 uses 200 trees; `--jobs` controls parallel search workers (default one).
 
@@ -61,10 +63,16 @@ metrics support paired comparisons; standard deviation is not a confidence
 interval. Elastic-net weights refer to standardized expression; forest weights
 are impurity importances and can be biased. Interpretation remains exploratory.
 
+## Current study
+
+The downloaded expression archive is `rnaseq_merged_20250922.zip`.
+Use the adapter described in [data preparation](docs/data-preparation.md).
+The response workbook uses Sanger model IDs directly. Raw and normalized matrices
+remain in ignored local directories; source hashes and compact research results
+are versioned. The September 2025 expression release is intentional.
+
 ## Next milestones
 
-- Obtain and verify GDSC source files and their schema; normalize and audit IDs.
-- Freeze drug choice and release using coverage, before inspecting model scores.
 - Run the full 50/200/1,000-gene study and inspect convergence warnings.
 - Compare paired fold errors and investigate tissue composition as a limitation.
 - Review selected genes against drug biology and write the final report.

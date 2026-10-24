@@ -46,7 +46,7 @@ nb.cells = [
          'assert not pred.duplicated(["cell_line_id", "model", "gene_count"]).any()\n'
          'assert (pred.groupby("cell_line_id").fold.nunique() == 1).all()\n'
          'assert (pred.groupby(["model", "gene_count"]).size() == 944).all()\n'
-         'assert (pred.groupby("cell_line_id").observed.nunique() == 1).all()\n'
+         'assert (pred.groupby("cell_line_id")["observed"].nunique() == 1).all()\n'
          'baseline = pred[pred.model == "mean_baseline"]\n'
          'for fold, group in baseline.groupby("fold"):\n'
          '    np.testing.assert_allclose(group.predicted, baseline.loc[baseline.fold != fold, "observed"].mean())\n'

@@ -54,7 +54,7 @@ def main():
     for feature in ['tissue', 'expression_source']:
         for fold in sorted(cohort.fold.unique()):
             train, test = cohort.loc[cohort.fold != fold], cohort.loc[cohort.fold == fold]
-            means = train.groupby(feature).observed.mean()
+            means = train.groupby(feature)['observed'].mean()
             estimate = test[feature].map(means).fillna(train.observed.mean())
             diagnostics.append({'baseline': feature+'_training_mean', 'fold': int(fold),
                                 'rmse': np.sqrt(mean_squared_error(test.observed, estimate)),

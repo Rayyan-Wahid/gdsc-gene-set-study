@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import sklearn
-from joblib import Memory
+from joblib import Memory, hash as joblib_hash
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import RandomForestRegressor
 from .models import ConvergedElasticNet
@@ -29,7 +29,7 @@ class Config:
     cache_dir: str | None = None
 
 
-def evaluate(X, y, output, config=None, metadata=None):
+def evaluate(X, y, output, config=None, metadata=None, resume=False):
     config = config or Config()
     if config.outer_folds < 2 or config.inner_folds < 2:
         raise ValueError("Both CV fold counts must be at least two.")
@@ -39,12 +39,19 @@ def evaluate(X, y, output, config=None, metadata=None):
         raise ValueError("X and y must have identical, unique cell-line indices.")
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
+    signature = joblib_hash((X, y, asdict(config), metadata, sklearn.__version__, np.__version__, 'checkpoint-v2'))
+    design = {'config': asdict(config), 'metadata': metadata or {}, 'signature': signature}
     if any(output.iterdir()):
-        raise ValueError("Output directory must be empty to preserve earlier runs.")
+        if not resume or not (output/'run_design.json').exists():
+            raise ValueError("Output directory must be empty, or use resume with a matching checkpointed run.")
+        if json.loads((output/'run_design.json').read_text()).get('signature') != signature:
+            raise ValueError('Cannot resume: data, settings, versions or checkpoint format changed.')
     outer = list(KFold(config.outer_folds, shuffle=True, random_state=config.seed).split(X))
     memory = Memory(config.cache_dir, verbose=0) if config.cache_dir else None
     # Save the design before fitting so interruptions still leave a reproducible record.
-    (output / 'run_design.json').write_text(json.dumps({'config': asdict(config), 'metadata': metadata or {}}, indent=2))
+    (output / 'run_design.json').write_text(json.dumps(design, indent=2))
+    checkpoints = output/'checkpoints'
+    checkpoints.mkdir(exist_ok=True)
     rows, predictions, genes, assignments, tuning = [], [], [], [], []
     for fold, (train, test) in enumerate(outer, 1):
         print(f"Outer fold {fold}/{config.outer_folds}", flush=True)
@@ -61,6 +68,14 @@ def evaluate(X, y, output, config=None, metadata=None):
                                   {"model__max_features": [0.3, 1.0], "model__min_samples_leaf": [2, 5]}),
             }
             for name, (model, grid) in models.items():
+                checkpoint = checkpoints/f'fold_{fold}_{name}_{k}.json'
+                if checkpoint.exists():
+                    record = json.loads(checkpoint.read_text())
+                    jobs.append((name, k, np.asarray(record['predictions'])))
+                    tuning.append(record['tuning'])
+                    genes.extend(record['genes'])
+                    print(f'  {name}, {k} genes: restored checkpoint', flush=True)
+                    continue
                 print(f'  {name}, {k} genes: inner search', flush=True)
                 pipe = Pipeline([("genes", GeneSelector(k, config.max_missing)),
                                  ("scale", StandardScaler() if name == "elastic_net" else "passthrough"),
@@ -69,14 +84,22 @@ def evaluate(X, y, output, config=None, metadata=None):
                                       n_jobs=config.n_jobs, error_score="raise")
                 search.fit(X.iloc[train], y.iloc[train])
                 best = search.best_estimator_
-                jobs.append((name, k, best.predict(X.iloc[test])))
-                tuning.append({"fold": fold, "model": name, "gene_count": k,
-                               "inner_rmse": -search.best_score_, "params": search.best_params_})
+                estimates = best.predict(X.iloc[test])
+                fit_info = {"fold": fold, "model": name, "gene_count": k,
+                            "inner_rmse": -search.best_score_, "params": search.best_params_}
+                model_genes = []
                 selector, fitted = best.named_steps["genes"], best.named_steps["model"]
                 importance = fitted.coef_ if name == "elastic_net" else fitted.feature_importances_
                 for index, score, weight in zip(selector.indices_, selector.scores_, importance):
-                    genes.append({"fold": fold, "model": name, "gene_count": k, "gene": X.columns[index],
+                    model_genes.append({"fold": fold, "model": name, "gene_count": k, "gene": X.columns[index],
                                   "abs_pearson": score, "weight": weight})
+                record = {'predictions': estimates.tolist(), 'tuning': fit_info, 'genes': model_genes}
+                temporary = checkpoint.with_suffix('.tmp')
+                temporary.write_text(json.dumps(record))
+                temporary.replace(checkpoint)
+                jobs.append((name, k, estimates))
+                tuning.append(fit_info)
+                genes.extend(model_genes)
         for name, k, pred in jobs:
             truth = y.iloc[test]
             rows.append({"fold": fold, "model": name, "gene_count": k,

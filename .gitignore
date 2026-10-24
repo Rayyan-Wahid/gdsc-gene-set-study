@@ -11,3 +11,6 @@ dist/
 # Interrupted runs retained locally for audit; final results have their own folder.
 results/full_study/
 results/mg132_full/
+results/**/checkpoint_*.csv
+results/**/checkpoints/
+results/mg132_final/

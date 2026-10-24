@@ -1,5 +1,14 @@
 # Data preparation
 
+## Resume an interrupted experiment
+
+`scripts/run_study.py --output results/mg132_complete --resume` restores completed
+model configurations. Each atomic JSON checkpoint includes predictions, selected
+genes, and tuned parameters. A data/settings/version fingerprint rejects mismatched
+runs. A configuration interrupted before its checkpoint is saved is refitted.
+`scripts/finish_study.py` runs the canonical experiment, report, and notebook in
+sequence and records progress in ignored `outputs/study_status.json`.
+
 ## Downloaded CMP archive adapter
 
 The supplied archive is `rnaseq_merged_20250922.zip` (September 2025),

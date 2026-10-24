@@ -16,7 +16,8 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--prepared', default='data/cmp_sanger')
     p.add_argument('--design', default='results/study_design/selection.json')
-    p.add_argument('--output', default='results/full_study')
+    p.add_argument('--output', default='results/mg132_complete')
+    p.add_argument('--resume', action='store_true')
     p.add_argument('--jobs', type=int, default=2)
     a = p.parse_args()
     frozen = json.loads(Path(a.design).read_text())
@@ -28,5 +29,5 @@ if __name__ == '__main__':
                   'expression_sha256': digest(root/'expression.csv.gz'),
                   'responses_sha256': digest(root/'responses.csv')})
     print(f'{len(X)} cell lines; {X.shape[1]} input genes', flush=True)
-    result = evaluate(X, y, a.output, Config(n_jobs=a.jobs, cache_dir='outputs/training_cache'), audit)
+    result = evaluate(X, y, a.output, Config(n_jobs=a.jobs, cache_dir='outputs/training_cache'), audit, resume=a.resume)
     print(result.to_string(index=False), flush=True)

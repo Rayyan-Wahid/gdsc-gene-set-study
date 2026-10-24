@@ -9,7 +9,7 @@ import sklearn
 from joblib import Memory
 from sklearn.dummy import DummyRegressor
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import ElasticNet
+from .models import ConvergedElasticNet
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import GridSearchCV, KFold
 from sklearn.pipeline import Pipeline
@@ -55,7 +55,7 @@ def evaluate(X, y, output, config=None, metadata=None):
         jobs = [("mean_baseline", 0, baseline.predict(np.zeros((len(test), 1))))]
         for k in config.gene_counts:
             models = {
-                "elastic_net": (ElasticNet(max_iter=30000, random_state=config.seed),
+                "elastic_net": (ConvergedElasticNet(max_iter=30000, selection='random', random_state=config.seed),
                                 {"model__alpha": [0.01, 0.1, 1.0], "model__l1_ratio": [0.1, 0.5, 0.9]}),
                 "random_forest": (RandomForestRegressor(n_estimators=config.trees, random_state=config.seed, n_jobs=1),
                                   {"model__max_features": [0.3, 1.0], "model__min_samples_leaf": [2, 5]}),

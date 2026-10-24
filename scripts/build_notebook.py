@@ -15,7 +15,7 @@ nb.cells = [
     code('from pathlib import Path\nimport json\nimport numpy as np\nimport pandas as pd\n'
          'from IPython.display import display, Image, Markdown\n'
          'ROOT = Path.cwd() if (Path.cwd()/"src").exists() else Path.cwd().parent\n'
-         'RUN = ROOT/"results/mg132_full"\n'
+         'RUN = ROOT/"results/mg132_final"\n'
          'design = json.loads((ROOT/"results/study_design/selection.json").read_text())\n'
          'manifest = json.loads((RUN/"manifest.json").read_text())'),
     md('## Data provenance and drug selection\n\n'
@@ -31,7 +31,7 @@ nb.cells = [
        '```bash\npython -m pip install -e ".[notebook]"\n'
        'python scripts/prepare_cmp.py --archive data/raw/rnaseq_merged_20250922.zip --models data/raw/model_list_20261013.csv --output data/cmp_sanger\n'
        'python scripts/select_drug.py --responses data/raw/GDSC2_fitted_dose_response_27Oct23.xlsx --source-xlsx data/raw/GDSC2_fitted_dose_response_27Oct23.xlsx --compounds data/raw/screened_compounds_rel_8.5_inchi.csv\n'
-       'python scripts/run_study.py --jobs 2 --output results/mg132_full\n'
+       'python scripts/run_study.py --jobs 2 --output results/mg132_final\n'
        'python scripts/report_study.py\n```'),
     md('## Protocol\n\nFive shared outer folds, three inner folds, seed 42. '
        'Missingness filtering, imputation, variance filtering, Pearson ranking, and scaling are fitted inside training folds. '
@@ -65,8 +65,8 @@ nb.cells = [
     md('## Exploratory gene stability\n\nTraining folds overlap, so repeated selection is not independent validation. '
        'Forest importance has no direction; elastic-net weights apply to standardized expression.'),
     code('display(pd.read_csv(RUN/"top_genes_50.csv")[["model", "gene_symbol", "gene", "fold_count", "mean_abs_weight_when_selected"]])'),
-    md('## Interpretation and limits\n\nRead [the study report](../results/mg132_full/report.md) and '
-       '[biological interpretation](../results/mg132_full/biology.md). '
+    md('## Interpretation and limits\n\nRead [the study report](../results/mg132_final/report.md) and '
+       '[biological interpretation](../results/mg132_final/biology.md). '
        'This is one-drug internal cell-line evaluation with mixed expression sources and random tissue-mixed folds. '
        'It provides no external or clinical validation. The best observed configuration is selected from the same '
        'evaluation comparison and should not be described as an independently established winner.'),

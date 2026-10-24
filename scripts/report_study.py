@@ -20,7 +20,7 @@ def markdown(frame):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('--run', default='results/mg132_full')
+    p.add_argument('--run', default='results/mg132_final')
     p.add_argument('--prepared', default='data/cmp_sanger')
     a = p.parse_args()
     run = Path(a.run)
@@ -130,6 +130,10 @@ tune parameters by RMSE. Every training fold independently filters genes with mo
 than 20% missingness, imputes medians, removes zero-variance genes, and ranks genes by
 absolute Pearson correlation with response. Elastic net also standardizes using
 training statistics. Both models use the same ranking and outer splits.
+Elastic net uses seeded random coordinate updates and retries unconverged fits with
+increasing iteration budgets; persistent nonconvergence raises an error. An initial
+cyclic-coordinate trial was stopped after convergence warnings, before any complete
+outer fold was reported. The final study reruns all configurations.
 The elastic-net grid is alpha 0.01/0.1/1 and l1 ratio 0.1/0.5/0.9. Random forests use
 200 trees, max_features 0.3/1, and min_samples_leaf 2/5. Refit preprocessing is learned
 on the complete outer training fold after tuning. No test-fold targets enter fitting.

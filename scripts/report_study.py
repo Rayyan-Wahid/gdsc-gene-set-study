@@ -20,7 +20,7 @@ def markdown(frame):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('--run', default='results/mg132_final')
+    p.add_argument('--run', default='results/mg132_complete')
     p.add_argument('--prepared', default='data/cmp_sanger')
     a = p.parse_args()
     run = Path(a.run)
@@ -98,6 +98,8 @@ def main():
     plt.close(fig)
     best = summary.loc[summary.model != 'mean_baseline'].sort_values('rmse_mean').iloc[0]
     baseline = summary.loc[summary.model == 'mean_baseline'].iloc[0]
+    relative = 100 * (baseline.rmse_mean - best.rmse_mean) / baseline.rmse_mean
+    comparison_sentence = f"The lowest observed model RMSE is {abs(relative):.1f}% {'below' if relative >= 0 else 'above'} the baseline mean RMSE."
     table = summary[['model','gene_count','rmse_mean','rmse_std','mae_mean','mae_std','r2_mean','r2_std']]
     text = f'''# MG-132 gene-set comparison
 
@@ -107,6 +109,7 @@ The study evaluates MG-132 (GDSC2 drug ID 1862) in {len(cohort)} matched cell li
 Drug selection was frozen before model fitting using maximum matched coverage.
 The lowest mean outer-fold RMSE is {best.rmse_mean:.4f}, from {best.model} with
 {int(best.gene_count)} genes; the training-mean baseline RMSE is {baseline.rmse_mean:.4f}.
+{comparison_sentence}
 This identifies the best observed configuration in this comparison, not an independently
 validated winner. Larger gene sets must be judged using the paired fold differences below.
 
@@ -179,8 +182,9 @@ and can be biased. Neither establishes causation or a drug-specific mechanism.
 ## Limitations
 
 This is internal evaluation of one drug and dataset. Random cell-line folds permit
-shared tissue and source composition and potentially related models across folds;
-they do not test generalization to unseen tissues, patients, or laboratories.
+shared tissue and source composition across folds; they do not test generalization
+to unseen tissues, patients, or laboratories. The annotation audit found no shared
+patient IDs among matched models, but relatedness was not independently validated.
 The merged expression sources may carry batch differences; source adjustment was not
 performed. Fitted LN_IC50 values have assay/model uncertainty. Outlying responses
 were retained under the prespecified rules and can affect RMSE. There is no external

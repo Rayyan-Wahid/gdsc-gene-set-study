@@ -15,7 +15,7 @@ nb.cells = [
     code('from pathlib import Path\nimport json\nimport numpy as np\nimport pandas as pd\n'
          'from IPython.display import display, Image, Markdown\n'
          'ROOT = Path.cwd() if (Path.cwd()/"src").exists() else Path.cwd().parent\n'
-         'RUN = ROOT/"results/mg132_final"\n'
+         'RUN = ROOT/"results/mg132_complete"\n'
          'design = json.loads((ROOT/"results/study_design/selection.json").read_text())\n'
          'manifest = json.loads((RUN/"manifest.json").read_text())'),
     md('## Data provenance and drug selection\n\n'
@@ -29,10 +29,10 @@ nb.cells = [
        'from the repository root with the four downloaded files in `data/raw/`. Use new output paths for a new run. '
        'The published results are already available; rerunning model training may take substantial time.\n\n'
        '```bash\npython -m pip install -e ".[notebook]"\n'
-       'python scripts/prepare_cmp.py --archive data/raw/rnaseq_merged_20250922.zip --models data/raw/model_list_20261013.csv --output data/cmp_sanger\n'
-       'python scripts/select_drug.py --responses data/raw/GDSC2_fitted_dose_response_27Oct23.xlsx --source-xlsx data/raw/GDSC2_fitted_dose_response_27Oct23.xlsx --compounds data/raw/screened_compounds_rel_8.5_inchi.csv\n'
-       'python scripts/run_study.py --jobs 2 --output results/mg132_final\n'
-       'python scripts/report_study.py\n```'),
+       'python scripts/prepare_cmp.py --archive data/raw/rnaseq_merged_20250922.zip --models data/raw/model_list_20261013.csv --output data/cmp_reproduction\n'
+       'python scripts/select_drug.py --responses data/raw/GDSC2_fitted_dose_response_27Oct23.xlsx --source-xlsx data/raw/GDSC2_fitted_dose_response_27Oct23.xlsx --compounds data/raw/screened_compounds_rel_8.5_inchi.csv --prepared data/cmp_reproduction --output outputs/reproduction/design\n'
+       'python scripts/run_study.py --jobs 2 --prepared data/cmp_reproduction --design outputs/reproduction/design/selection.json --output outputs/reproduction/run\n'
+       'python scripts/report_study.py --prepared data/cmp_reproduction --run outputs/reproduction/run\n```'),
     md('## Protocol\n\nFive shared outer folds, three inner folds, seed 42. '
        'Missingness filtering, imputation, variance filtering, Pearson ranking, and scaling are fitted inside training folds. '
        'Inner-fold RMSE chooses parameters. Each outer test set remains untouched until prediction.'),
@@ -45,6 +45,11 @@ nb.cells = [
          'assert len(pred) == 944 * 7\n'
          'assert not pred.duplicated(["cell_line_id", "model", "gene_count"]).any()\n'
          'assert (pred.groupby("cell_line_id").fold.nunique() == 1).all()\n'
+         'assert (pred.groupby(["model", "gene_count"]).size() == 944).all()\n'
+         'assert (pred.groupby("cell_line_id").observed.nunique() == 1).all()\n'
+         'baseline = pred[pred.model == "mean_baseline"]\n'
+         'for fold, group in baseline.groupby("fold"):\n'
+         '    np.testing.assert_allclose(group.predicted, baseline.loc[baseline.fold != fold, "observed"].mean())\n'
          'for keys, group in pred.groupby(["fold", "model", "gene_count"]):\n'
          '    fold, model, k = keys\n'
          '    reported = metrics[(metrics.fold == fold) & (metrics.model == model) & (metrics.gene_count == k)].iloc[0]\n'
@@ -65,8 +70,8 @@ nb.cells = [
     md('## Exploratory gene stability\n\nTraining folds overlap, so repeated selection is not independent validation. '
        'Forest importance has no direction; elastic-net weights apply to standardized expression.'),
     code('display(pd.read_csv(RUN/"top_genes_50.csv")[["model", "gene_symbol", "gene", "fold_count", "mean_abs_weight_when_selected"]])'),
-    md('## Interpretation and limits\n\nRead [the study report](../results/mg132_final/report.md) and '
-       '[biological interpretation](../results/mg132_final/biology.md). '
+    md('## Interpretation and limits\n\nRead [the study report](../results/mg132_complete/report.md) and '
+       '[biological interpretation](../results/mg132_complete/biology.md). '
        'This is one-drug internal cell-line evaluation with mixed expression sources and random tissue-mixed folds. '
        'It provides no external or clinical validation. The best observed configuration is selected from the same '
        'evaluation comparison and should not be described as an independently established winner.'),

@@ -29,10 +29,12 @@ filtering by missingness, variance, or response association still happens in fol
 The adapter exports gene annotations, tissue/source metadata, checksums, and counts.
 It does not copy clinical annotation fields unrelated to this study into outputs.
 
-Obtain expression and fitted drug-response data from the official
-[GDSC portal](https://www.cancerrxgene.org/) or its linked Sanger distribution.
-Older bulk-download URLs may no longer work. No download URL or current release
-has been assumed valid by this starter repository.
+Obtain expression, model annotations, and fitted drug-response data from the
+[Cell Model Passports downloads page](https://cellmodelpassports.sanger.ac.uk/downloads).
+The study uses the September 2025 expression archive and
+[October 2023 GDSC2 response workbook](https://cmp.cog.sanger.ac.uk/download/GDSC2_fitted_dose_response_27Oct23.xlsx).
+Release filenames and source hashes in the frozen selection identify the actual
+inputs; a newer download is not necessarily an identical reproduction.
 
 Keep original files outside version control. Record the source URL, release,
 download date, screening dataset, drug identifier, expression measurement type,

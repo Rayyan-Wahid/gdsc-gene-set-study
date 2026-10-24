@@ -71,6 +71,20 @@ The response workbook uses Sanger model IDs directly. Raw and normalized matrice
 remain in ignored local directories; source hashes and compact research results
 are versioned. The September 2025 expression release is intentional.
 
+After preparing the local inputs and freezing the selection, run the complete
+training, report, and executed-notebook workflow with:
+
+```bash
+python scripts/finish_study.py
+```
+
+Progress is recorded in `outputs/study_status.json`. Each completed model/fold
+configuration is saved under `results/mg132_complete/checkpoints/`; rerunning
+the command restores matching checkpoints. Changes to the data, configuration,
+or recorded software versions require a fresh output directory. Checkpoints
+and raw data are excluded from Git. The final notebook checks shared test folds,
+prediction coverage, the training-mean baseline, and recomputed RMSE values.
+
 ## Next milestones
 
 - Run the full 50/200/1,000-gene study and inspect convergence warnings.
